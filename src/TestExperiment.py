@@ -1,5 +1,6 @@
 import unittest
-from your_module import Experiment, SignalDetection
+from Experiment import Experiment
+from SignalDetection import SignalDetection
 
 class TestExperiment(unittest.TestCase):
 
@@ -11,6 +12,12 @@ class TestExperiment(unittest.TestCase):
         self.exp.add_condition(sdt_obj, label="Condition A")
         self.assertEqual(len(self.exp.conditions), 1)
         self.assertEqual(self.exp.conditions[0][1], "Condition A")
+
+    def test_add_condition_without_label(self):
+        # Test that if no label is provided, the condition is stored with a None label.
+        sdt_obj = SignalDetection(40, 10, 20, 30)
+        self.exp.add_condition(sdt_obj)
+        self.assertIsNone(self.exp.conditions[0][1])
 
     def test_sorted_roc_points(self):
         self.exp.add_condition(SignalDetection(40, 10, 20, 30), label="Condition A")
@@ -35,6 +42,32 @@ class TestExperiment(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             self.exp.compute_auc()
+    
+    def test_conditions_storage(self):
+
+        #Test that multiple conditions are stored properly.
+        sdt1 = SignalDetection(10, 5, 3, 7)
+        sdt2 = SignalDetection(20, 10, 8, 12)
+        self.exp.add_condition(sdt1, label="First")
+        self.exp.add_condition(sdt2, label="Second")
+        self.assertEqual(len(self.exp.conditions), 2)
+        self.assertEqual(self.exp.conditions[0][1], "First")
+        self.assertEqual(self.exp.conditions[1][1], "Second")
+
+    def test_plot_roc_curve(self):
+        """Test that plot_roc_curve runs without errors."""
+        sdt = SignalDetection(50, 50, 50, 50)
+        self.exp.add_condition(sdt, label="Test")
+        try:
+            self.exp.plot_roc_curve(show_plot=False)
+        except Exception as e:
+            self.fail(f"plot_roc_curve() raised an exception: {e}")
+
+    def test_compute_auc_single_condition(self):
+
+        # Test that when only one condition is added, compute_auc returns 0.0
+        self.exp.add_condition(SignalDetection(40, 10, 20, 30), label="Single Condition")
+        self.assertEqual(self.exp.compute_auc(), 0.0)
 
 if __name__ == '__main__':
     unittest.main()
