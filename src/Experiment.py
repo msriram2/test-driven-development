@@ -1,20 +1,21 @@
 from SignalDetection import SignalDetection
-import matplotlib.pyplot as plt # type: ignore
-import numpy as np # type: ignore
-
+import matplotlib.pyplot as plt  # type: ignore
+import numpy as np  # type: ignore
 
 class Experiment:
     def __init__(self):
-        self.conditions_labels_list = []
+        # Use a consistent name for the list of conditions.
+        self.conditions = []  
 
     def add_condition(self, sig_det_obj: SignalDetection, label: str = None) -> None:
-        self.conditions_labels_list.append((sig_det_obj, label))
+        self.conditions.append((sig_det_obj, label))
 
     def sorted_roc_points(self) -> tuple[list[float], list[float]]:
         if not self.conditions:
             raise ValueError("No conditions have been added to the experiment.")
         
-        false_alarm_rates = [sdt.false_alarm_rate() for sdt, _ in self.conditions]
+        # Note: use sdt.fa_rate() since that’s the method defined in SignalDetection.
+        false_alarm_rates = [sdt.fa_rate() for sdt, _ in self.conditions]
         hit_rates = [sdt.hit_rate() for sdt, _ in self.conditions]
         
         sorted_indices = np.argsort(false_alarm_rates)
@@ -23,7 +24,6 @@ class Experiment:
         
         return sorted_false_alarm_rates, sorted_hit_rates
 
-    
     def compute_auc(self) -> float:
         if not self.conditions:
             raise ValueError("No conditions available to compute AUC.")
