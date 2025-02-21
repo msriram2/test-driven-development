@@ -76,6 +76,8 @@ class TestExperiment(unittest.TestCase):
         self.exp.add_condition(SignalDetection(40, 10, 20, 30), label="Single Condition")
         self.assertEqual(self.exp.compute_auc(), 0.0)
 
+#Test message
+
 if __name__ == '__main__':
     unittest.main()
 
