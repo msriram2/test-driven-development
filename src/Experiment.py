@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt  # type: ignore
 import numpy as np  # type: ignore
 
 class Experiment:
+    """Initializes self.conditions. self.conditions is a list containing signal-detection theory
+    objects.
+    
+    Accepts no parameters and returns nothing.
+    """
     def __init__(self):
         # Use a consistent name for the list of conditions.
         self.conditions = []  
